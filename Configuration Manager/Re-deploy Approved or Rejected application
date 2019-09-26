@@ -1,0 +1,12 @@
+# for the new feature to approve and auto install an application directly to a device which was released in 1906
+# the application must have been made available to a device collection for this script to have an affect
+# make sure the deployment has been made available and set to "an administrator must approve a requst for this application on the device"
+# this script will redeploy the application for a deployment that has already been approved or been rejected
+
+$appid = "ScopeId_7E24328C-B13B-4AEA-98E3-170A4544FA85/Application_273fd615-6c90-46e8-9d5f-6e9575487ad2"
+$machinename = "cl2"
+
+
+$reqObj = Get-WmiObject -Namespace 'root\sms\site_LVH' -Class SMS_UserApplicationRequest | `
+    Where {$_.ModelName -eq $appid -and $_.RequestedMachine -eq $machinename }
+$reqObj.approve('Application has been re-approved for this device')
