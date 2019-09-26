@@ -1,0 +1,21 @@
+# for the new feature to approve and auto install an application directly to a device which was released in 1906
+# the application must have been made available to a device collection for this script to have an affect
+# make sure the deployment has been made available and set to "an administrator must approve a requst for this application on the device"
+
+[CmdletBinding()]
+Param (
+    [Parameter(Mandatory=$true)] [string] $AppName,
+    [Parameter(Mandatory=$true)] [string] $MachineName,
+    [Parameter(Mandatory=$false)] [string] $UserName,
+    [Parameter(Mandatory=$false)] [string] $AutoInstall = $true,
+    [Parameter(Mandatory=$false)] [string] $Comments
+)
+ 
+Process {
+    $scObj=Get-WmiObject -Namespace root\sms -Query 'select SiteCode from sms_providerlocation'
+    $sitecode = $scObj.SiteCode 
+    $namespace ="root\sms\site_" + $sitecode
+    $clientGuid = (Get-WmiObject -Namespace $namespace -Query "SELECT SMSUniqueIdentifier FROM SMS_R_SYSTEM WHERE Name = '$machinename'").SMSUniqueIdentifier
+    $AppID = (Get-WmiObject -Namespace $namespace -Query "SELECT ModelName FROM SMS_application WHERE LocalizedDisplayName = '$AppName' and IsLatest = 'True'").ModelName
+    Invoke-WmiMethod -Path "SMS_UserApplicationRequest" -Namespace $namespace -Name CreateApprovedRequest -ArgumentList @($appid, $autoInstall, $clientGuid, $comments, $username)
+}
