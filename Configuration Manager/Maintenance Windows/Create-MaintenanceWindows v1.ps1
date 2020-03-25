@@ -1,4 +1,4 @@
-﻿ 
+﻿  
 #    .SYNOPSIS 
 #       Used to set maintenance windows 
 #    .DESCRIPTION 
@@ -9,8 +9,15 @@
  
 #region Initialising 
     # Site configuration
-    $SiteCode = Read-Host "Site Code" # "LVH" # Site code 
-    $ProviderMachineName = Read-Host "Site Server FQDN" # "MEM.larsinus.com" # SMS Provider machine name
+    $defaultSiteCode = 'LVH'
+    $SiteCode = Read-Host "Type [Site Code] or press enter to accept the default [$($defaultSiteCode)]"
+    $SiteCode = ($defaultSiteCode,$SiteCode)[[bool]$SiteCode]
+    $defaultSiteServer = 'MEM.larsinus.com'
+    $SiteServer = Read-Host "Type [Site Server FQDN] or press enter to accept the default [$($defaultSiteServer)]"
+    $SiteServer = ($defaultSiteServer,$SiteServer)[[bool]$SiteServer]
+    #$SiteCode = Read-Host "Site Code" # "LVH" # Site code 
+    #$ProviderMachineName = Read-Host "Site Server FQDN" # "MEM.larsinus.com" # SMS Provider machine name
+
 
     # Customizations
     $initParams = @{}
@@ -32,6 +39,16 @@
     # Set the current location to be the site code.
     Set-Location "$($SiteCode):\" @initParams
 #endregion
+
+Function Space {
+    param ([int]$i, [int]$ii)	
+    $NoSpace = ($ii - $i)
+	While ($NoSpace -gt 0){
+		$gap = $gap + " "
+		$NoSpace--
+	}
+	Write-Host $gap -NoNewline
+}
 
 Function Get-FileName($initialDirectory){  
     [System.Reflection.Assembly]::LoadWithPartialName(“System.windows.forms”) |
@@ -101,14 +118,14 @@ Function Get-PatchTuesday ([int] $Month){
     return $PatchDay 
 } 
 
-Function Set-PatchMW ([int]$PatchMonth, [int]$OffSetDays, [int] $OffSetWeeks, [string] $CollectionID){ 
+Function Set-PatchMW ([int]$PatchMonth, [int]$OffSetDays, [int] $OffSetWeeks,  [string] $CollectionID){ 
     #Set Patch Tuesday for each Month 
     $PatchDay=Get-PatchTuesday($PatchMonth) 
     #Set Maintenance Window Naming Convention (Months array starting from 0 hence the -1) 
     $MWName =  $MWPrefix+$MonthNames[$PatchMonth-1] #+".Week"+$OffSetWeeks 
     #Set Device Collection Maintenace interval  
-    $StartTime=$PatchDay.AddDays($OffSetDays).AddMinutes(30) 
-    $EndTime=$StartTime.Addhours(5).AddMinutes(30) 
+    $StartTime=$PatchDay.AddDays($OffSetDays).AddHours($addStartHours).AddMinutes($addStartMinutes) 
+    $EndTime=$StartTime.Addhours($addDurationHours).AddMinutes($addDurationMinutes) 
     #Create The Schedule Token  
     $Schedule = New-CMSchedule -Nonrecurring -Start $StartTime.AddDays($OffSetWeeks*7) -End $EndTime.AddDays($OffSetWeeks*7) 
     #Set Maintenance Windows 
@@ -120,9 +137,10 @@ Function Remove-MaintnanceWindows ([string]$CollectionID){
         Remove-CMMaintenanceWindow -CollectionID $CollectionID -Name $_.Name -Force 
         $Coll=Get-CMDeviceCollection -CollectionId $CollectionID 
         Write-Host -ForegroundColor Cyan "[INFORMATION] " -NoNewline
-        Write-Host "Removing Maintenance Window:" -NoNewline
+        Write-Host "Removing Maintenance Window: " -NoNewline
         Write-Host -ForegroundColor Cyan $_.Name -NoNewline
-        Write-Host "- From Collection:" -NoNewline
+        Space ($_.Name).length 12
+        Write-Host " from Collection: " -NoNewline
         Write-Host -ForegroundColor Cyan $Coll.Name 
     } 
 }
@@ -138,6 +156,10 @@ foreach ($phase in $MWSettings.Keys){
     $arrCollectionIDs = ($MWSettings.$phase.CollectionIDs).Split(',')
     $OffSetDays= $MWSettings.$phase.OffsetDay #Defer number of days after PT | E.G. 3=Friday (Tue+3days)
     $OffSetWeeks= $MWSettings.$phase.OffsetWeek #Defer number of weeks after PT week
+    $addStartMinutes = $MWSettings.$phase.StartTime.Split(':')[1]
+    $addStartHours = $MWSettings.$phase.StartTime.Split(':')[0]
+    $addDurationMinutes = $MWSettings.$phase.Duration.Split(':')[1]
+    $addDurationHours = $MWSettings.$phase.Duration.Split(':')[0]
 
     foreach ($collection in $arrCollectionIDs){
         Write-Host -ForegroundColor Yellow ("Working on collection "+$collection)
@@ -147,17 +169,14 @@ foreach ($phase in $MWSettings.Keys){
         else {
             $Month = $today.Month
         }
+
         # Remove Previous Maintenance Windows 
         Remove-MaintnanceWindows $Collection
+
+
         # Create new Maintenance Windows
         For ($Month; $Month -le 12; $Month++){
             Set-PatchMW $Month $OffSetDays $OffSetWeeks $Collection
         }
     }
 }
-
-
-
-
-
-
