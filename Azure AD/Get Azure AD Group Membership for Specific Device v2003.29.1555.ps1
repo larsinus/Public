@@ -28,7 +28,9 @@
     if ($null -eq $ModuleStatus) {
         Install-Module -Name Microsoft.Graph.Intune
     }
-    $creds = Import-Clixml -Path .\Creds.xml
+    If (Test-Path .\creds.xml) {
+        $creds = Import-Clixml -Path .\Creds.xml
+    }
     if(!($creds)) {
         # Create Credential Object
         $useraccount = <your AzureAD credentials> #example 'admin@contoso.com'
