@@ -24,7 +24,9 @@
 $ScriptPath = <path to your script location> # example 'C:\Scripts\'
 Set-Location $ScriptPath
 
-$creds = Import-Clixml -Path .\Creds.xml
+If (Test-Path .\creds.xml) {
+    $creds = Import-Clixml -Path .\Creds.xml
+}
 if(!($creds)) {
     # Create Credential Object
     $useraccount = <your AzureAD credentials> #example 'admin@contoso.com'
