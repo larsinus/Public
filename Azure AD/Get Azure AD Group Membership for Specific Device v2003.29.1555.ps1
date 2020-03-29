@@ -24,10 +24,6 @@
     $scriptPath = <path to your script location> # example 'C:\Scripts\'
     Set-Location $scriptPath
 
-    $ModuleStatus = Get-Module -Name Microsoft.Graph.Intune
-    if ($null -eq $ModuleStatus) {
-        Install-Module -Name Microsoft.Graph.Intune
-    }
     If (Test-Path .\creds.xml) {
         $creds = Import-Clixml -Path .\Creds.xml
     }
