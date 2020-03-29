@@ -9,20 +9,15 @@
  
 #region Initialising 
     # Site configuration
-    $defaultSiteCode = 'LVH'
+    $defaultSiteCode = <Site Code> # example'ABC'
     $SiteCode = Read-Host "Type [Site Code] or press enter to accept the default [$($defaultSiteCode)]"
     $SiteCode = ($defaultSiteCode,$SiteCode)[[bool]$SiteCode]
-    $defaultSiteServer = 'MEM.larsinus.com'
+    $defaultSiteServer = <Site Server FQDN> #example 'PS1.contoso.com'
     $SiteServer = Read-Host "Type [Site Server FQDN] or press enter to accept the default [$($defaultSiteServer)]"
     $SiteServer = ($defaultSiteServer,$SiteServer)[[bool]$SiteServer]
-    #$SiteCode = Read-Host "Site Code" # "LVH" # Site code 
-    #$ProviderMachineName = Read-Host "Site Server FQDN" # "MEM.larsinus.com" # SMS Provider machine name
-
 
     # Customizations
     $initParams = @{}
-    #$initParams.Add("Verbose", $true) # Uncomment this line to enable verbose logging
-    #$initParams.Add("ErrorAction", "Stop") # Uncomment this line to stop the script on any errors
 
     # Do not change anything below this line
 
