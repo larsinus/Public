@@ -1,5 +1,39 @@
+<#
+    Description:
+        Used to get maintenance windows for the collections you have specified in the .ini file
+        The .ini file should just be a list of collection ID's (one per line)
 
-Function Get-FileName($initialDirectory){  
+#>
+
+#region Initialising
+    # Site configuration
+    $defaultSiteCode = <Site Code> # example'ABC'
+    $SiteCode = Read-Host "Type [Site Code] or press enter to accept the default [$($defaultSiteCode)]"
+    $SiteCode = ($defaultSiteCode,$SiteCode)[[bool]$SiteCode]
+    $defaultSiteServer = <Site Server FQDN> #example 'PS1.contoso.com'
+    $SiteServer = Read-Host "Type [Site Server FQDN] or press enter to accept the default [$($defaultSiteServer)]"
+    $SiteServer = ($defaultSiteServer,$SiteServer)[[bool]$SiteServer]
+
+    # Customizations
+    $initParams = @{}
+
+    # Do not change anything below this line
+
+    # Import the ConfigurationManager.psd1 module
+    if((Get-Module ConfigurationManager) -eq $null) {
+        Import-Module "$($ENV:SMS_ADMIN_UI_PATH)\..\ConfigurationManager.psd1" @initParams
+    }
+
+    # Connect to the site's drive if it is not already present
+    if((Get-PSDrive -Name $SiteCode -PSProvider CMSite -ErrorAction SilentlyContinue) -eq $null) {
+        New-PSDrive -Name $SiteCode -PSProvider CMSite -Root $ProviderMachineName @initParams
+    }
+
+    # Set the current location to be the site code.
+    Set-Location "$($SiteCode):\" @initParams
+#endregion
+
+Function Get-FileName($initialDirectory){
     [System.Reflection.Assembly]::LoadWithPartialName(“System.windows.forms”) |
     Out-Null
 
@@ -13,7 +47,7 @@ Function Get-FileName($initialDirectory){
 $allCollections = Get-Content (Get-Filename -initialDirectory "C:fso") # "LVH00014", "LVH00015", "SMS00001"
 
 Function Space {
-    param ([int]$i, [int]$ii)	
+    param ([int]$i, [int]$ii)
     $NoSpace = ($ii - $i)
 	While ($NoSpace -gt 0){
 		$gap = $gap + " "
@@ -23,7 +57,7 @@ Function Space {
 }
 
 Foreach ($collection in $allCollections){
-    
+
     $divider = "---------------------------------------------------------------------------"
     Write-Host $divider
     $objCollection = Get-CMCollection -Id $collection

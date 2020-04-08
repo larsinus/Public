@@ -1,13 +1,13 @@
-﻿  
-#    .SYNOPSIS 
-#       Used to set maintenance windows 
-#    .DESCRIPTION 
-#       Calculating second tuesday of any month and setting Maintenance window offset by any number of days/weeks 
-#> 
- 
-#Run on Site server 
- 
-#region Initialising 
+﻿<#
+    Description:
+        Used to set maintenance windows
+        Calculating second tuesday of any month and setting Maintenance window offset by any number of days/weeks
+
+        Run the script on the Site Server.
+        Needs to run with elevated privileges the first time in case the PS module is missing
+#>
+
+#region Initialising
     # Site configuration
     $defaultSiteCode = <Site Code> # example'ABC'
     $SiteCode = Read-Host "Type [Site Code] or press enter to accept the default [$($defaultSiteCode)]"
@@ -21,9 +21,9 @@
 
     # Do not change anything below this line
 
-    # Import the ConfigurationManager.psd1 module 
+    # Import the ConfigurationManager.psd1 module
     if((Get-Module ConfigurationManager) -eq $null) {
-        Import-Module "$($ENV:SMS_ADMIN_UI_PATH)\..\ConfigurationManager.psd1" @initParams 
+        Import-Module "$($ENV:SMS_ADMIN_UI_PATH)\..\ConfigurationManager.psd1" @initParams
     }
 
     # Connect to the site's drive if it is not already present
@@ -36,7 +36,7 @@
 #endregion
 
 Function Space {
-    param ([int]$i, [int]$ii)	
+    param ([int]$i, [int]$ii)
     $NoSpace = ($ii - $i)
 	While ($NoSpace -gt 0){
 		$gap = $gap + " "
@@ -45,7 +45,7 @@ Function Space {
 	Write-Host $gap -NoNewline
 }
 
-Function Get-FileName($initialDirectory){  
+Function Get-FileName($initialDirectory){
     [System.Reflection.Assembly]::LoadWithPartialName(“System.windows.forms”) |
     Out-Null
 
@@ -56,94 +56,94 @@ Function Get-FileName($initialDirectory){
     $OpenFileDialog.filename
 } #end function Get-FileName
 
-function Get-IniFile {  
-    param(  
-        [parameter(Mandatory = $true)] [string] $filePath  
-    )  
+function Get-IniFile {
+    param(
+        [parameter(Mandatory = $true)] [string] $filePath
+    )
 
     $anonymous = "NoSection"
 
-    $ini = @{}  
-    switch -regex -file $filePath  
-    {  
-        "^\[(.+)\]$" # Section  
-        {  
-            $section = $matches[1]  
-            $ini[$section] = @{}  
-            $CommentCount = 0  
-        }  
+    $ini = @{}
+    switch -regex -file $filePath
+    {
+        "^\[(.+)\]$" # Section
+        {
+            $section = $matches[1]
+            $ini[$section] = @{}
+            $CommentCount = 0
+        }
 
-        "^(;.*)$" # Comment  
-        {  
-            if (!($section))  
-            {  
-                $section = $anonymous  
-                $ini[$section] = @{}  
-            }  
-            $value = $matches[1]  
-            $CommentCount = $CommentCount + 1  
-            $name = "Comment" + $CommentCount  
-            $ini[$section][$name] = $value  
-        }   
+        "^(;.*)$" # Comment
+        {
+            if (!($section))
+            {
+                $section = $anonymous
+                $ini[$section] = @{}
+            }
+            $value = $matches[1]
+            $CommentCount = $CommentCount + 1
+            $name = "Comment" + $CommentCount
+            $ini[$section][$name] = $value
+        }
 
-        "(.+?)\s*=\s*(.*)" # Key  
-        {  
-            if (!($section))  
-            {  
-                $section = $anonymous  
-                $ini[$section] = @{}  
-            }  
-            $name,$value = $matches[1..2]  
-            $ini[$section][$name] = $value  
-        }  
-    }  
+        "(.+?)\s*=\s*(.*)" # Key
+        {
+            if (!($section))
+            {
+                $section = $anonymous
+                $ini[$section] = @{}
+            }
+            $name,$value = $matches[1..2]
+            $ini[$section][$name] = $value
+        }
+    }
 
-    return $ini  
-}  
+    return $ini
+}
 
-Function Get-PatchTuesday ([int] $Month){ 
-    $FindNthDay=2 #Aka Second occurence 
-    $WeekDay='Tuesday' 
-    $Today=get-date -Month $Month 
-    $todayM=$Today.Month.ToString() 
-    $todayY=$Today.Year.ToString() 
-    [datetime]$StrtMonth=$todayM+'/1/'+$todayY 
-    while ($StrtMonth.DayofWeek -ine $WeekDay ) { $StrtMonth=$StrtMonth.AddDays(1) } 
-    $PatchDay=$StrtMonth.AddDays(7*($FindNthDay-1)) 
-    return $PatchDay 
-} 
+Function Get-PatchTuesday ([int] $Month){
+    $FindNthDay=2 #Aka Second occurence
+    $WeekDay='Tuesday'
+    $Today=get-date -Month $Month
+    $todayM=$Today.Month.ToString()
+    $todayY=$Today.Year.ToString()
+    [datetime]$StrtMonth=$todayM+'/1/'+$todayY
+    while ($StrtMonth.DayofWeek -ine $WeekDay ) { $StrtMonth=$StrtMonth.AddDays(1) }
+    $PatchDay=$StrtMonth.AddDays(7*($FindNthDay-1))
+    return $PatchDay
+}
 
-Function Set-PatchMW ([int]$PatchMonth, [int]$OffSetDays, [int] $OffSetWeeks,  [string] $CollectionID){ 
-    #Set Patch Tuesday for each Month 
-    $PatchDay=Get-PatchTuesday($PatchMonth) 
-    #Set Maintenance Window Naming Convention (Months array starting from 0 hence the -1) 
-    $MWName =  $MWPrefix+$MonthNames[$PatchMonth-1] #+".Week"+$OffSetWeeks 
-    #Set Device Collection Maintenace interval  
-    $StartTime=$PatchDay.AddDays($OffSetDays).AddHours($addStartHours).AddMinutes($addStartMinutes) 
-    $EndTime=$StartTime.Addhours($addDurationHours).AddMinutes($addDurationMinutes) 
-    #Create The Schedule Token  
-    $Schedule = New-CMSchedule -Nonrecurring -Start $StartTime.AddDays($OffSetWeeks*7) -End $EndTime.AddDays($OffSetWeeks*7) 
-    #Set Maintenance Windows 
+Function Set-PatchMW ([int]$PatchMonth, [int]$OffSetDays, [int] $OffSetWeeks,  [string] $CollectionID){
+    #Set Patch Tuesday for each Month
+    $PatchDay=Get-PatchTuesday($PatchMonth)
+    #Set Maintenance Window Naming Convention (Months array starting from 0 hence the -1)
+    $MWName =  $MWPrefix+$MonthNames[$PatchMonth-1] #+".Week"+$OffSetWeeks
+    #Set Device Collection Maintenace interval
+    $StartTime=$PatchDay.AddDays($OffSetDays).AddHours($addStartHours).AddMinutes($addStartMinutes)
+    $EndTime=$StartTime.Addhours($addDurationHours).AddMinutes($addDurationMinutes)
+    #Create The Schedule Token
+    $Schedule = New-CMSchedule -Nonrecurring -Start $StartTime.AddDays($OffSetWeeks*7) -End $EndTime.AddDays($OffSetWeeks*7)
+    #Set Maintenance Windows
     New-CMMaintenanceWindow -CollectionID $CollectionID -Schedule $Schedule -Name $MWName -ApplyTo SoftwareUpdatesOnly
-} 
+}
 
-Function Remove-MaintnanceWindows ([string]$CollectionID){ 
-    Get-CMMaintenanceWindow -CollectionId $CollectionID | ForEach-Object { 
-        Remove-CMMaintenanceWindow -CollectionID $CollectionID -Name $_.Name -Force 
-        $Coll=Get-CMDeviceCollection -CollectionId $CollectionID 
+Function Remove-MaintnanceWindows ([string]$CollectionID){
+    Get-CMMaintenanceWindow -CollectionId $CollectionID | ForEach-Object {
+        Remove-CMMaintenanceWindow -CollectionID $CollectionID -Name $_.Name -Force
+        $Coll=Get-CMDeviceCollection -CollectionId $CollectionID
         Write-Host -ForegroundColor Cyan "[INFORMATION] " -NoNewline
         Write-Host "Removing Maintenance Window: " -NoNewline
         Write-Host -ForegroundColor Cyan $_.Name -NoNewline
         Space ($_.Name).length 12
         Write-Host " from Collection: " -NoNewline
-        Write-Host -ForegroundColor Cyan $Coll.Name 
-    } 
+        Write-Host -ForegroundColor Cyan $Coll.Name
+    }
 }
 
 $MWSettings = Get-IniFile (Get-Filename -initialDirectory "C:fso") # "G:\Library\Scripts\MWSettings.ini"
 $today = Get-Date
 $MWPrefix = "MW-"
-$MonthArray = New-Object System.Globalization.DateTimeFormatInfo 
+$MonthArray = New-Object System.Globalization.DateTimeFormatInfo
 $MonthNames = $MonthArray.MonthNames
 
 foreach ($phase in $MWSettings.Keys){
@@ -165,7 +165,7 @@ foreach ($phase in $MWSettings.Keys){
             $Month = $today.Month
         }
 
-        # Remove Previous Maintenance Windows 
+        # Remove Previous Maintenance Windows
         Remove-MaintnanceWindows $Collection
 
 
