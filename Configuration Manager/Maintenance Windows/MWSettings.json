@@ -1,0 +1,46 @@
+﻿[
+    {
+        "Phase":"P1 TEST",
+        "OffsetDay":"0",
+        "OffsetWeek":"0",
+        "StartTime":"01:00",
+        "Duration":"02:00",
+        "isEnalbed":"True",
+        "isUTC":"False",
+        "MWType":"SoftwareUpdatesOnly",
+        "CollectionIDs":"LVH00014"
+    },
+    {
+        "Phase":"P2 PILOT",
+        "OffsetDay":"1",
+        "OffsetWeek":"0",
+        "StartTime":"02:00",
+        "Duration":"04:30",
+        "isEnalbed":"True",
+        "isUTC":"False",
+        "MWType":"SoftwareUpdatesOnly",
+        "CollectionIDs":"LVH00015,LVH00016"
+    },
+    {
+        "Phase":"P3 PRODUCTION",
+        "OffsetDay":"2",
+        "OffsetWeek":"1 ",
+        "StartTime":"18:15",
+        "Duration":"23:45",
+        "isEnalbed":"True",
+        "isUTC":"False",
+        "MWType":"SoftwareUpdatesOnly",
+        "CollectionIDs":"LVH00017,LVH00018"
+    },
+    {
+        "Phase":"P4 PRODUCTION",
+        "OffsetDay":"4",
+        "OffsetWeek":"4",
+        "StartTime":"18:37",
+        "Duration":"21:41",
+        "isEnalbed":"True",
+        "isUTC":"False",
+        "MWType":"SoftwareUpdatesOnly",
+        "CollectionIDs":"LVH00019"
+    }
+]
