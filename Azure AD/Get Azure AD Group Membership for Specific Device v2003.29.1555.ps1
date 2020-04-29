@@ -21,7 +21,7 @@
 #-----------------------------------------------------------------------------------------
 #region Verifying module existence and getting credentials
 #-----------------------------------------------------------------------------------------
-    $scriptPath = <path to your script location> # example 'C:\Scripts\'
+    $scriptPath = 'C:\users\larhal\OneDrive\Library\Scripts'# <path to your script location> # example 'C:\Scripts\'
     Set-Location $scriptPath
 
     If (Test-Path .\creds.xml) {
@@ -29,7 +29,7 @@
     }
     if(!($creds)) {
         # Create Credential Object
-        $useraccount = <your AzureAD credentials> #example 'admin@contoso.com'
+        $useraccount = 'admin@larsinus.com' #<your AzureAD credentials> #example 'admin@contoso.com'
         $creds = Get-Credential -Credential $useraccount
         # Save the PSCredential as a serialized object to file
         Export-Clixml -Path .\Creds.xml  -InputObject $Creds
