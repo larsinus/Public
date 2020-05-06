@@ -14,10 +14,10 @@
     PS LVH:\<Script Path>\&'.\Create CollectionID Input file.ps1'
     Finds all the CollectionID's in your environment and will prompt you with what to label the file and where to save it.
 
+    .EXAMPLE
     PS LVH:\<Script Path>\&'.\Create CollectionID Input file.ps1' -filter SUM
     Finds all CollectionID's that have a Collection Name containing the phrase 'SUM' and will prompt you with what to
     label the file and where to save it.
-
 #>
 
 param (
