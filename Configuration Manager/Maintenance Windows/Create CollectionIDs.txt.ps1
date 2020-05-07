@@ -10,6 +10,15 @@
     Make sure to open PowerShell from Microsoft Endpoint Manager and run the default (pop up) script.
     You will now have a drive labeled the same as your site code. Now you can run the script.
 
+    .NOTES
+    Version:    2005.07.1255
+    Author:     Lars Halvoersen, Microsoft
+    Change:
+
+    .INPUTS
+
+    .OUTPUTS
+
     .EXAMPLE
     PS LVH:\<Script Path>\&'.\Create CollectionID Input file.ps1'
     Finds all the CollectionID's in your environment and will prompt you with what to label the file and where to save it.
@@ -20,10 +29,15 @@
     label the file and where to save it.
 #>
 
+#----------------------[ INITIALIZATIONS ]-------------------------------------------------------------------
 param (
     $Filter
 )
 
+#----------------------[ DECLARATIONS ]----------------------------------------------------------------------
+
+
+#----------------------[ FUNCTIONS ]-------------------------------------------------------------------------
 function Save-File {
     param (
         [parameter()]
@@ -40,5 +54,6 @@ function Save-File {
     }
 }
 
+#----------------------[ EXECUTION ]-------------------------------------------------------------------------
 $arrCollections = (Get-CMCollection | Where-Object name -Match $Filter).CollectionID
 Save-File
