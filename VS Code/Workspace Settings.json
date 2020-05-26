@@ -1,0 +1,78 @@
+﻿{
+	"folders": [
+		{
+			"path": ""
+		}
+	],
+	"settings":
+	{
+		    "editor.renderLineHighlight": "line",
+		    "editor.fontFamily": "Segoe UI",
+		    "editor.fontSize": 16,
+			"editor.fontWeight": "500",
+			"editor.tabCompletion": "on",
+
+			"terminal.explorerKind": "external",
+
+		    "powershell.codeFormatting.newLineAfterCloseBrace": true,
+		    "powershell.codeFormatting.newLineAfterOpenBrace": true,
+		    "powershell.codeFormatting.whitespaceAfterSeparator": true,
+		    "powershell.codeFormatting.whitespaceAroundOperator": true,
+		    "powershell.codeFormatting.whitespaceBeforeOpenParen": true,
+			"powershell.codeFormatting.autoCorrectAliases": true,
+			"powershell.codeFormatting.preset": "Custom",
+			"powershell.integratedConsole.showOnStartup": false,
+			"powershell.integratedConsole.focusConsoleOnExecute": true,
+		    "files.defaultLanguage": "powershell",
+		    "workbench.colorCustomizations": {
+		        "activityBar.background": "#831471",
+				"activityBar.foreground": "#ffffff",
+		        "titleBar.activeBackground": "#831471",
+		        "editorBracketMatch.border": "#ff00e6fa",
+		        "titleBar.activeForeground": "#FBFCFE",
+				"editor.lineHighlightBackground": "#00597c2f",
+		    },
+			"editor.tokenColorCustomizationsExperimental": {"operator": "#b70ae2","comment": "#ff0000"},
+
+
+		    "workbench.activityBar.visible": true,
+		    "debug.openDebug": "neverOpen",
+		    "explorer.autoReveal": false,
+		    "debug.openExplorerOnEnd": false,
+		"terminal.integrated.fontFamily": "Lucida Console",
+		"terminal.integrated.fontSize": 14,
+		"terminal.integrated.letterSpacing": 0,
+
+		"editor.tokenColorCustomizations": {
+			"textMateRules": [
+			 {
+			  "scope": [
+			   "entity.name.function.powershell",
+			   "support.function.attribute.powershell"
+
+			  ],
+			  "settings": {
+			   "foreground": "#9203b6"
+			  }
+			 },
+			 {
+				"scope": [
+				 "variable.other.readwrite.powershell"
+				],
+				"settings": {
+				 "foreground": "#b70ae2"
+				}
+			   },
+			   {
+				"scope": [
+				 "keyword.operator.assignment.powershell"
+				],
+				"settings": {
+				 "foreground": "#0f0f0f"
+				}
+			   }
+			]
+		   }
+		},
+		"workbench.editorAssociations": []
+}
