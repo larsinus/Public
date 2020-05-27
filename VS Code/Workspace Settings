@@ -35,10 +35,6 @@
 					"scope": ["keyword.operator.assignment.powershell",],
 					"settings": {"foreground": "#0f0f0f",}
 				},
-				{
-					"scope": ["support.function.function-call.powershell",],
-					"settings": {"foreground": "#f50014",}
-				},
 			]
 		},
 
