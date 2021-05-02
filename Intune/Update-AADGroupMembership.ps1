@@ -21,7 +21,7 @@
     =================================================================================================
     Specify your 'parameter filter' (-eq/-ne/-gt/...etc.) and 
     'parameter value' (''/'desktop-agre2dg'/'1234567'/...etc.) 
-    on line 229
+    on line 223
 #>
     $intuneParameter = 'androidSecurityPatchLevel'
     $AADGroupID = '<Your Azure AD Group ID>'
