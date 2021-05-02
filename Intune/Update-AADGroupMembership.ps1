@@ -24,7 +24,7 @@
     on line 229
 #>
     $intuneParameter = 'androidSecurityPatchLevel'
-    $AADGroupID = '49947fa4-3f89-4cee-b264-ffcdf5f04c5e'
+    $AADGroupID = '<Your AAD Group ID>'
     # Specify parameter filter 
 
     $subscriptionID = Get-AutomationVariable 'subscriptionID' # Azure Subscription ID Variable
