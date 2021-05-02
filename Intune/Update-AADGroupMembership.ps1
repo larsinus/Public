@@ -27,27 +27,21 @@
     $AADGroupID = '49947fa4-3f89-4cee-b264-ffcdf5f04c5e'
     # Specify parameter filter 
 
-    $subscriptionID = '1d40c903-1181-4436-a0f2-5821d39c7fd3' #Get-AutomationVariable 'subscriptionID' # Azure Subscription ID Variable
-    $tenantID = 'a475ce4a-631c-4171-a869-42ac95c97962' #Get-AutomationVariable 'tenantID' # Azure Tenant ID Variable
-    $resourceGroupName = 'intunereporting' # Get-AutomationVariable 'resourceGroupName' # Resource group name
-    $storageAccountName = 'intunereportingstorage1' # Get-AutomationVariable 'storageAccountName' # Storage account name
-
-    # Report specific Variables
-    $outputContainerName = 'appinstallstate' # Get-AutomationVariable 'appinstallstate' # Resource group name
-    $snapshotsContainerName = 'appinstallstatesnapshots' # Get-AutomationVariable 'appinstallstatesnapshots' # Storage account name
+    $subscriptionID = Get-AutomationVariable 'subscriptionID' # Azure Subscription ID Variable
+    $tenantID = Get-AutomationVariable 'tenantID' # Azure Tenant ID Variable
 #endregion variables
 
 #region -[ Graph App Registration Creds ]-
     # Uses a Secret Credential named 'GraphApi' in your Automation Account
-    #$clientInfo = Get-AutomationPSCredential 'GraphApi'
+    $clientInfo = Get-AutomationPSCredential 'GraphApi'
     # Username of Automation Credential is the Graph App Registration client ID 
-    #$clientID = $clientInfo.UserName
+    $clientID = $clientInfo.UserName
     # Password  of Automation Credential is the Graph App Registration secret key (create one if needed)
-    #$secretPass = $clientInfo.GetNetworkCredential().Password
+    $secretPass = $clientInfo.GetNetworkCredential().Password
 
     #Required credentials - Get the client_id and client_secret from the app when creating it in Azure AD
-    $client_id = 'd7d3f44d-9a0b-4553-a16d-30ef0b2d93af' # $clientID #App ID
-    $client_secret = 'O~j.Hl95a_w0d.t6YaZCBLo89SXYDqUwxm' # $secretPass #API Access Key Password
+    $client_id = $clientID #App ID
+    $client_secret = $secretPass #API Access Key Password
 #endregion graph app registration creds
 
 function Get-AuthToken {
