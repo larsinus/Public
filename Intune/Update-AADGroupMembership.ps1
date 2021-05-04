@@ -255,7 +255,7 @@ elseif ($arrAddToAADGroup.Length -gt 20){
     $parts = [math]::Ceiling($arrAddToAADGroup.Length / $chunkSize)
     
     # splitting the array
-    for($i=0; $i -le $parts; $i++){
+    for($i=0; $i -lt $parts; $i++){
         $start = $i*$chunkSize
         $end = (($i+1)*$chunkSize)-1
         $outArray += ,@($arrAddToAADGroup[$start..$end])
